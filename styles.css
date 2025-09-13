@@ -1,0 +1,21 @@
+body {
+  font-family: monospace;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.5;
+  background: #fff;
+  color: #000;
+}
+
+h1, h2 { text-align: center; }
+
+ul { list-style: none; padding: 0; }
+
+li { margin-bottom: 10px; }
+
+a { color: #000; text-decoration: underline; }
+
+.event { border-bottom: 1px solid #ccc; padding: 10px 0; }
+
+footer { text-align: center; margin-top: 20px; font-size: 0.8em; }
