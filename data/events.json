@@ -1,0 +1,70 @@
+{
+  "events": [
+    {
+      "id": "pdx-001",
+      "city": "Portland",
+      "date": "2025-10-10",
+      "time": "19:00",
+      "venue": "Doug Fir Lounge, 830 E Burnside St",
+      "name": "Local Folk Jam",
+      "description": "Acoustic sets from Pacific NW artists. $15 at door. All ages.",
+      "links": ["https://dougfirlounge.com"],
+      "tags": ["music", "folk"]
+    },
+    {
+      "id": "pdx-002",
+      "city": "Portland",
+      "date": "2025-10-12",
+      "time": "10:00",
+      "venue": "Pioneer Courthouse Square",
+      "name": "Portland Farmers Market",
+      "description": "Local vendors, food stalls, live music. Free entry. All ages.",
+      "links": ["https://portlandfarmersmarket.org"],
+      "tags": ["market", "outdoor"]
+    },
+    {
+      "id": "pdx-003",
+      "city": "Portland",
+      "date": "2025-10-15",
+      "time": "20:00",
+      "venue": "Crystal Ballroom, 1332 W Burnside St",
+      "name": "Indie Pop Night",
+      "description": "Live indie pop bands. $20 advance, $25 door. 21+.",
+      "links": ["https://crystalballroompdx.com"],
+      "tags": ["music", "nightlife"]
+    },
+    {
+      "id": "sf-001",
+      "city": "San Francisco",
+      "date": "2025-10-11",
+      "time": "20:00",
+      "venue": "The Fillmore, 1805 Geary Blvd",
+      "name": "Indie Rock Night",
+      "description": "Local bands play indie and alternative. $20 at door. 21+.",
+      "links": ["https://fillmore.com"],
+      "tags": ["music", "nightlife"]
+    },
+    {
+      "id": "nyc-001",
+      "city": "New York",
+      "date": "2025-10-13",
+      "time": "19:00",
+      "venue": "Bowery Ballroom, 6 Delancey St",
+      "name": "Electronic Night",
+      "description": "DJ sets with techno and house. $15 advance, $20 door. 18+.",
+      "links": ["https://boweryballroom.com"],
+      "tags": ["music", "dance"]
+    },
+    {
+      "id": "la-001",
+      "city": "Los Angeles",
+      "date": "2025-10-14",
+      "time": "21:00",
+      "venue": "The Roxy, 9009 Sunset Blvd",
+      "name": "Punk Rock Show",
+      "description": "Live punk bands. $25 tickets. 21+.",
+      "links": ["https://theroxy.com"],
+      "tags": ["music", "nightlife"]
+    }
+  ]
+}
