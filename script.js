@@ -5,13 +5,11 @@ async function loadEvents(city) {
     const events = data.events
       .filter(event => event.city.toLowerCase() === city.toLowerCase())
       .sort((a, b) => new Date(a.date) - new Date(b.date));
-
     const container = document.getElementById('events-container');
     if (events.length === 0) {
       container.innerHTML = '<p>No events found for this city.</p>';
       return;
     }
-
     events.forEach(event => {
       const div = document.createElement('div');
       div.className = 'event';
