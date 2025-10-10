@@ -9,8 +9,9 @@
 <body>
   <h1>Portland Events</h1>
   <p>Upcoming events (live from PDX Pipeline RSS), sorted by date. <a href="index.html">Back to cities</a></p>
-  <div id="events-container"></div>
-  <script src="script.js"></script>
+  <div id="events-container">Loading events...</div>
+  <div id="error-message" style="color: red;"></div>
+  <script src="script.js" onerror="document.getElementById('error-message').innerText='Error: script.js not found. Check repo.'"></script>
   <script>loadEvents('Portland');</script>
   <footer>
     <p>Contact: mcclellan.johnston@gmail.com | <a href="https://github.com/macjohnston/city-events-site">Edit on GitHub</a></p>
