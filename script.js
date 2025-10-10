@@ -1,57 +1,60 @@
 async function loadEvents(city) {
+  const errorDiv = document.getElementById('error-message');
   try {
-    let rssUrl = 'https://www.pdxpipeline.com/feed/'; // Portland RSS
-    const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(rssUrl));
-    const xmlText = await response.text();
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-    const items = xmlDoc.getElementsByTagName('item');
+    errorDiv.innerText = 'Fetching events...'; // Show progress
+    let apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.pdxpipeline.com%2Ffeed%2F';
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error('Fetch failed: HTTP ' + response.status);
+    }
+    const data = await response.json();
     const events = [];
 
-    for (let item of items) {
-      const title = item.getElementsByTagName('title')[0]?.textContent || 'Untitled Event';
-      const link = item.getElementsByTagName('link')[0]?.textContent || '';
-      const description = item.getElementsByTagName('description')[0]?.textContent || '';
-      const pubDate = item.getElementsByTagName('pubDate')[0]?.textContent || '';
-      const date = new Date(pubDate).toISOString().split('T')[0]; // YYYY-MM-DD
-      const time = new Date(pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }); // HH:MM 24hr
+    if (data.status !== 'ok' || !data.items) {
+      throw new Error('Invalid RSS data: ' + (data.error || 'No items'));
+    }
 
-      const venueMatch = description.match(/@ ([\w\s.,]+?)(?=\s*\|)/i);
+    data.items.forEach(item => {
+      const pubDate = new Date(item.pubDate);
+      const date = pubDate.toISOString().split('T')[0]; // YYYY-MM-DD
+      const time = pubDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }); // HH:MM
+
+      const venueMatch = (item.title + ' ' + item.description).match(/@ ([\w\s.,]+?)(?=\s*\|)/i);
       const venue = venueMatch ? venueMatch[1].trim() : 'Venue TBD';
 
-      if (new Date(date) >= new Date().toISOString().split('T')[0]) {
+      if (pubDate >= new Date()) {
         events.push({
-          name: title,
+          name: item.title,
           date: date,
           time: time,
           venue: venue,
-          description: description.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
-          links: [link]
+          description: item.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
+          links: [item.link]
         });
       }
-    }
+    });
 
     events.sort((a, b) => new Date(a.date) - new Date(b.date));
-
     const container = document.getElementById('events-container');
     if (events.length === 0) {
       container.innerHTML = '<p>No upcoming events found for this city.</p>';
+      errorDiv.innerText = '';
       return;
     }
 
+    container.innerHTML = ''; // Clear loading
     events.slice(0, 10).forEach(event => {
       const div = document.createElement('div');
       div.className = 'event';
       div.innerHTML = `
-        <strong>${event.date} ${event.time ? `@ ${event.time}` : ''} - ${event.name}</strong><br>
-        Venue: ${event.venue}<br>
+        <strong>${event.date} @ ${event.time} | ${event.name} @ ${event.venue}</strong><br>
         ${event.description}<br>
-        <a href="${event.links[0]}">More info</a>
+        <a href="${event.links[0]}" target="_blank">More info</a>
       `;
       container.appendChild(div);
     });
+    errorDiv.innerText = ''; // Clear errors on success
   } catch (error) {
-    console.error('Error loading events:', error);
-    document.getElementById('events-container').innerHTML = '<p>Error loading events. Check console for details.</p>';
+    errorDiv.innerText = 'Error loading events: ' + error.message;
   }
 }
