@@ -16,7 +16,8 @@
       <thead>
         <tr>
           <th>Date/Time</th>
-          <th>Event @ Venue</th>
+          <th>Event Title</th>
+          <th>Venue</th>
           <th>Tags</th>
           <th>Price</th>
           <th>Age</th>
@@ -26,10 +27,11 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Manual placeholders; JS will add more -->
+        <!-- Manual placeholders as backup -->
         <tr>
           <td>Oct 20, 2025 (7pm)</td>
-          <td><a href="https://www.mcmenamins.com/events/sample">Live Music Night</a> @ <a href="https://www.mcmenamins.com/crystal-ballroom">Crystal Ballroom (Portland, OR)</a></td>
+          <td>The Decemberists</td>
+          <td><a href="https://www.mcmenamins.com/crystal-ballroom">Crystal Ballroom (Portland, OR)</a></td>
           <td>music, indie</td>
           <td>$15-25</td>
           <td>21+</td>
@@ -37,17 +39,7 @@
           <td><a href="https://www.mcmenamins.com/events/sample-tickets">Tickets</a></td>
           <td>2025-10-20</td>
         </tr>
-        <tr>
-          <td>Oct 22, 2025 (8pm)</td>
-          <td><a href="https://www.mcmenamins.com/events/sample2">Comedy Show</a> @ <a href="https://www.mcmenamins.com/edgefield">Edgefield (Troutdale, OR)</a></td>
-          <td>comedy, arts</td>
-          <td>$10</td>
-          <td>All ages</td>
-          <td>McMenamins</td>
-          <td><a href="https://www.mcmenamins.com/events/sample2-info">More Info</a></td>
-          <td>2025-10-22</td>
-        </tr>
-        <!-- Add more manual ones from venues as backups -->
+        <!-- Add more if needed -->
       </tbody>
     </table>
   </div>
@@ -60,18 +52,13 @@
   <h2>Venue List</h2>
   <ul>
     <li><a href="https://www.mcmenamins.com/crystal-ballroom">Crystal Ballroom (McMenamins)</a> - 1332 W Burnside St</li>
-    <li><a href="https://www.modacenter.com/">Moda Center</a> - 1 N Center Ct St</li>
-    <li><a href="https://www.arleneschnitzer.com/">Arlene Schnitzer Concert Hall</a> - 1037 SW Broadway</li>
-    <li><a href="https://www.holocene.org/">Holocene</a> - 1001 SE Morrison St</li>
-    <li><a href="https://www.wonderballroom.com/">Wonder Ballroom</a> - 128 NE Russell St</li>
+    <!-- Others -->
   </ul>
 
   <h2>Promoter/Organizer List</h2>
   <ul>
     <li><a href="https://www.mcmenamins.com/">McMenamins</a></li>
-    <li><a href="https://www.travelportland.com/">Travel Portland</a></li>
-    <li><a href="https://www.portlandmercury.com/">Portland Mercury (EverOut)</a></li>
-    <li><a href="https://www.pdxpipeline.com/">PDX Pipeline</a></li>
+    <!-- Others -->
   </ul>
 
   <footer>
@@ -79,33 +66,44 @@
   </footer>
 
   <script>
-    // Sample JS for automation: Fetch from Eventbrite API (get your free token at eventbrite.com/platform/api-keys)
-    async function fetchEvents() {
-      const apiToken = 'YOUR_EVENTBRITE_TOKEN_HERE'; // Replace with yours
-      const url = `https://www.eventbriteapi.com/v3/events/search/?location.address=Portland,OR&location.within=50km&expand=ticket_availability&token=${apiToken}`;
+    async function fetchEventsFromSheet() {
+      const sheetUrl = 'YOUR_SHEET_JSON_URL'; // Replace here
       try {
-        const response = await fetch(url);
-        const data = await response.json();
+        const response = await fetch(sheetUrl);
+        const text = await response.text();
+        const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.+)\);/)[1]);
+        const rows = json.table.rows;
         const tbody = document.querySelector('#events-table tbody');
-        data.events.forEach(event => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${new Date(event.start.local).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</td>
-            <td><a href="${event.url}">${event.name.text}</a> @ Venue (Portland, OR)</td> <!-- Venue from event.venue if expanded -->
-            <td>tags placeholder</td> <!-- Parse from description -->
-            <td>${event.ticket_availability.has_available_tickets ? event.ticket_availability.minimum_ticket_price.display_price : 'TBD'}</td>
-            <td>TBD</td> <!-- Add if available -->
-            <td>${event.organizer.name || ''}</td>
-            <td><a href="${event.url}">Tickets</a></td>
-            <td>${event.start.local.split('T')[0]}</td>
-          `;
-          tbody.appendChild(row);
+        tbody.innerHTML = ''; // Clear manuals
+        rows.forEach(row => {
+          const cells = row.c.map(cell => cell ? cell.v : 'TBD');
+          const rowHtml = `
+            <tr>
+              <td>${cells[0]}</td>
+              <td>${cells[1]}</td>
+              <td>${cells[2]}</td>
+              <td>${cells[3]}</td>
+              <td>${cells[4]}</td>
+              <td>${cells[5]}</td>
+              <td>${cells[6]}</td>
+              <td><a href="${cells[7]}">Tickets</a></td>
+              <td>${cells[8]}</td>
+            </tr>`;
+          tbody.insertAdjacentHTML('beforeend', rowHtml);
         });
       } catch (error) {
         document.getElementById('error-message').style.display = 'block';
       }
     }
-    fetchEvents(); // Runs on load
+    fetchEventsFromSheet();
+
+    // Simple sorting by SortDate (click header)
+    document.querySelector('th:last-child').addEventListener('click', () => {
+      const table = document.getElementById('events-table');
+      const rows = Array.from(table.tBodies[0].rows);
+      rows.sort((a, b) => a.cells[8].textContent.localeCompare(b.cells[8].textContent));
+      rows.forEach(row => table.tBodies[0].appendChild(row));
+    });
   </script>
 </body>
 </html>
