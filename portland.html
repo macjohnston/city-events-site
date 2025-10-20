@@ -8,11 +8,72 @@
 </head>
 <body>
   <h1>Portland Events</h1>
-  <p>Upcoming events (live from PDX Pipeline RSS), sorted by date. <a href="index.html">Back to cities</a></p>
-  <div id="events-container">Loading events...</div>
-  <div id="error-message" style="color: red;"></div>
-  <script src="script.js" onerror="document.getElementById('error-message').innerText='Error: script.js not found. Check repo.'"></script>
-  <script>loadEvents('Portland');</script>
+  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Text-only, updated Oct 2025. <a href="index.html">Back to Cities</a></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date/Time</th>
+        <th>Event @ Venue</th>
+        <th>Tags</th>
+        <th>Price</th>
+        <th>Age</th>
+        <th>Organizers</th>
+        <th>Links</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sun: Oct 19 (7pm)</td>
+        <td><a href="https://example.com/event">Kaytranada, Justice</a> @ Moda Center (Portland, OR)</td>
+        <td>house, hip-hop</td>
+        <td>$32-38</td>
+        <td>All ages</td>
+        <td>Soul'd Out Productions</td>
+        <td><a href="https://example.com/tickets">Tickets</a> | <a href="https://example.com/fb">Facebook</a></td>
+      </tr>
+      <tr>
+        <td>Thu: Oct 23 (8pm)</td>
+        <td><a href="https://example.com/event">Layton Giordani</a> @ 45 East (Portland, OR)</td>
+        <td>techno</td>
+        <td>$20</td>
+        <td>21+</td>
+        <td>Realm Nightclub</td>
+        <td><a href="https://example.com/info">More Info</a></td>
+      </tr>
+      <tr>
+        <td>Fri: Oct 24 (9pm-2am)</td>
+        <td><a href="https://example.com/event">Sorry For Party Rocking (2010s Pop & EDM)</a> @ Holocene (Portland, OR)</td>
+        <td>big room house, electro house, pop EDM</td>
+        <td>Free</td>
+        <td>21+</td>
+        <td></td>
+        <td><a href="https://example.com/tickets">Tickets</a></td>
+      </tr>
+      <!-- Add more rows for other events -->
+    </tbody>
+  </table>
+
+  <h2>Recurring Events</h2>
+  <p>No recurring events listed yet—add if needed.</p>
+
+  <h2>Venue List</h2>
+  <ul>
+    <li><a href="https://example.com/venue">Moda Center</a> - 1 N Center Ct St, Portland, OR</li>
+    <li><a href="https://example.com/venue">45 East</a> - 315 SE 3rd Ave, Portland, OR</li>
+    <li><a href="https://example.com/venue">Holocene</a> - 1001 SE Morrison St, Portland, OR</li>
+    <!-- Add more venues -->
+  </ul>
+
+  <h2>Promoter/Organizer List</h2>
+  <ul>
+    <li><a href="https://example.com/promoter">Soul'd Out Productions</a></li>
+    <li><a href="https://example.com/promoter">Realm Nightclub</a></li>
+    <!-- Add more -->
+  </ul>
+
+  <div id="error-message">No events found? Check back soon or contribute on GitHub!</div>
+
   <footer>
     <p>Contact: mcclellan.johnston@gmail.com | <a href="https://github.com/macjohnston/city-events-site">Edit on GitHub</a></p>
   </footer>
