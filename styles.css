@@ -1,5 +1,5 @@
 body {
-  font-family: monospace;
+  font-family: monospace, 'Courier New', Courier;
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -11,15 +11,7 @@ h1, h2 { text-align: center; }
 ul { list-style: none; padding: 0; }
 li { margin-bottom: 10px; }
 a { color: #000; text-decoration: underline; }
-.event { 
-  border-bottom: 1px solid #ccc; 
-  padding: 10px 0; 
-  margin-bottom: 20px; 
-}
-.event strong { display: block; margin-bottom: 5px; }
-#error-message { color: red; margin-top: 10px; }
-footer { text-align: center; margin-top: 30px; font-size: 0.8em; }
-
+a:hover { color: #333; text-decoration: none; }
 table {
   width: 100%;
   border-collapse: collapse;
@@ -35,6 +27,7 @@ th {
   font-weight: bold;
 }
 @media (max-width: 600px) {
+  body { padding: 10px; }
   table, thead, tbody, th, td, tr {
     display: block;
   }
@@ -68,3 +61,11 @@ th {
   td:nth-of-type(6):before { content: "Organizers"; }
   td:nth-of-type(7):before { content: "Links"; }
 }
+@media (prefers-color-scheme: dark) {
+  body { background: #222; color: #fff; }
+  a { color: #fff; }
+  th { background: #333; }
+  td { border-bottom: 1px solid #444; }
+}
+#error-message { color: red; margin-top: 10px; }
+footer { text-align: center; margin-top: 30px; font-size: 0.8em; }
