@@ -9,83 +9,61 @@
 </head>
 <body>
   <h1>Portland Events</h1>
-  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Text-only, updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
+  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Date/Time</th>
-        <th>Event @ Venue</th>
-        <th>Tags</th>
-        <th>Price</th>
-        <th>Age</th>
-        <th>Organizers</th>
-        <th>Links</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Sample events from McMenamins (pulled from their site - add real ones by browsing https://www.mcmenamins.com/events and pasting rows) -->
-      <tr>
-        <td>Oct 20, 2025 (7pm)</td>
-        <td><a href="https://www.mcmenamins.com/events/sample">Live Music Night</a> @ Crystal Ballroom (100 NW 6th Ave, Portland, OR)</td>
-        <td>music, indie</td>
-        <td>$15-25</td>
-        <td>21+</td>
-        <td>McMenamins</td>
-        <td><a href="https://www.mcmenamins.com/events/sample-tickets">Tickets</a></td>
-      </tr>
-      <tr>
-        <td>Oct 22, 2025 (8pm)</td>
-        <td><a href="https://www.mcmenamins.com/events/sample2">Comedy Show</a> @ Edgefield (2126 SW Halsey St, Troutdale, OR - near Portland)</td>
-        <td>comedy, arts</td>
-        <td>$10</td>
-        <td>All ages</td>
-        <td>McMenamins</td>
-        <td><a href="https://www.mcmenamins.com/events/sample2-info">More Info</a></td>
-      </tr>
-      <!-- Events from other sources like Portland Mercury/EverOut -->
-      <tr>
-        <td>Every Wed-Sun through Oct 31, 2025 (7pm)</td>
-        <td><a href="https://everout.com/portland/events/cinema-of-horrors-drive-in/e218037/">Cinema of Horrors Drive-In</a> @ Ridgefield (near Portland)</td>
-        <td>arts, film, halloween</td>
-        <td>$49-69</td>
-        <td></td>
-        <td></td>
-        <td><a href="https://everout.com/portland/events/cinema-of-horrors-drive-in/e218037/">Tickets</a></td>
-      </tr>
-      <tr>
-        <td>Every Thu-Sun through Nov 8, 2025 (7:30pm)</td>
-        <td><a href="https://everout.com/portland/events/dancing-on-the-sabbath/e214302/">Dancing on the Sabbath</a> @ Hosford-Abernethy</td>
-        <td>arts, dance</td>
-        <td>$10-50</td>
-        <td></td>
-        <td></td>
-        <td><a href="https://everout.com/portland/events/dancing-on-the-sabbath/e214302/">More Info</a></td>
-      </tr>
-      <tr>
-        <td>Oct 19, 2025 (8pm)</td>
-        <td><a href="https://everout.com/portland/events/stereolab/e199786/">Stereolab</a> @ West End</td>
-        <td>music, rock</td>
-        <td>$53.86</td>
-        <td></td>
-        <td></td>
-        <td><a href="https://everout.com/portland/events/stereolab/e199786/">Tickets</a></td>
-      </tr>
-      <!-- Add more rows from other aggregators/venues as you find them -->
-    </tbody>
-  </table>
+  <div class="table-wrapper">
+    <table id="events-table">
+      <thead>
+        <tr>
+          <th>Date/Time</th>
+          <th>Event @ Venue</th>
+          <th>Tags</th>
+          <th>Price</th>
+          <th>Age</th>
+          <th>Organizers</th>
+          <th>Links</th>
+          <th>Sort Date</th> <!-- Hidden for sorting -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Manual placeholders; JS will add more -->
+        <tr>
+          <td>Oct 20, 2025 (7pm)</td>
+          <td><a href="https://www.mcmenamins.com/events/sample">Live Music Night</a> @ <a href="https://www.mcmenamins.com/crystal-ballroom">Crystal Ballroom (Portland, OR)</a></td>
+          <td>music, indie</td>
+          <td>$15-25</td>
+          <td>21+</td>
+          <td>McMenamins</td>
+          <td><a href="https://www.mcmenamins.com/events/sample-tickets">Tickets</a></td>
+          <td>2025-10-20</td>
+        </tr>
+        <tr>
+          <td>Oct 22, 2025 (8pm)</td>
+          <td><a href="https://www.mcmenamins.com/events/sample2">Comedy Show</a> @ <a href="https://www.mcmenamins.com/edgefield">Edgefield (Troutdale, OR)</a></td>
+          <td>comedy, arts</td>
+          <td>$10</td>
+          <td>All ages</td>
+          <td>McMenamins</td>
+          <td><a href="https://www.mcmenamins.com/events/sample2-info">More Info</a></td>
+          <td>2025-10-22</td>
+        </tr>
+        <!-- Add more manual ones from venues as backups -->
+      </tbody>
+    </table>
+  </div>
+
+  <div id="error-message" style="display: none;">No events found? Check back or contribute!</div>
 
   <h2>Recurring Events</h2>
-  <p>Example: Woodstock Farmers Market - Every Sunday through Oct 2025. Check sources for details.</p>
+  <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
 
   <h2>Venue List</h2>
   <ul>
-    <li><a href="https://www.mcmenamins.com/crystal-ballroom">Crystal Ballroom (McMenamins)</a> - 1332 W Burnside St, Portland, OR</li>
-    <li><a href="https://www.modacenter.com/">Moda Center</a> - 1 N Center Ct St, Portland, OR</li>
-    <li><a href="https://www.arleneschnitzer.com/">Arlene Schnitzer Concert Hall</a> - 1037 SW Broadway, Portland, OR</li>
-    <li><a href="https://www.holocene.org/">Holocene</a> - 1001 SE Morrison St, Portland, OR</li>
-    <li><a href="https://www.wonderballroom.com/">Wonder Ballroom</a> - 128 NE Russell St, Portland, OR</li>
-    <!-- Add more -->
+    <li><a href="https://www.mcmenamins.com/crystal-ballroom">Crystal Ballroom (McMenamins)</a> - 1332 W Burnside St</li>
+    <li><a href="https://www.modacenter.com/">Moda Center</a> - 1 N Center Ct St</li>
+    <li><a href="https://www.arleneschnitzer.com/">Arlene Schnitzer Concert Hall</a> - 1037 SW Broadway</li>
+    <li><a href="https://www.holocene.org/">Holocene</a> - 1001 SE Morrison St</li>
+    <li><a href="https://www.wonderballroom.com/">Wonder Ballroom</a> - 128 NE Russell St</li>
   </ul>
 
   <h2>Promoter/Organizer List</h2>
@@ -94,13 +72,40 @@
     <li><a href="https://www.travelportland.com/">Travel Portland</a></li>
     <li><a href="https://www.portlandmercury.com/">Portland Mercury (EverOut)</a></li>
     <li><a href="https://www.pdxpipeline.com/">PDX Pipeline</a></li>
-    <!-- Add more -->
   </ul>
-
-  <div id="error-message">No events found? Check back soon or contribute on GitHub!</div>
 
   <footer>
     <p>Contact: mcclellan.johnston@gmail.com | <a href="https://github.com/macjohnston/city-events-site">Edit on GitHub</a></p>
   </footer>
+
+  <script>
+    // Sample JS for automation: Fetch from Eventbrite API (get your free token at eventbrite.com/platform/api-keys)
+    async function fetchEvents() {
+      const apiToken = 'YOUR_EVENTBRITE_TOKEN_HERE'; // Replace with yours
+      const url = `https://www.eventbriteapi.com/v3/events/search/?location.address=Portland,OR&location.within=50km&expand=ticket_availability&token=${apiToken}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const tbody = document.querySelector('#events-table tbody');
+        data.events.forEach(event => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${new Date(event.start.local).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</td>
+            <td><a href="${event.url}">${event.name.text}</a> @ Venue (Portland, OR)</td> <!-- Venue from event.venue if expanded -->
+            <td>tags placeholder</td> <!-- Parse from description -->
+            <td>${event.ticket_availability.has_available_tickets ? event.ticket_availability.minimum_ticket_price.display_price : 'TBD'}</td>
+            <td>TBD</td> <!-- Add if available -->
+            <td>${event.organizer.name || ''}</td>
+            <td><a href="${event.url}">Tickets</a></td>
+            <td>${event.start.local.split('T')[0]}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        document.getElementById('error-message').style.display = 'block';
+      }
+    }
+    fetchEvents(); // Runs on load
+  </script>
 </body>
 </html>
