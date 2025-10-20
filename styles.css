@@ -25,6 +25,8 @@ th, td {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ccc;
+  
+  CSS: th:nth-child(9), td:nth-child(9) { display: none; }
 }
 th {
   background: #f4f4f4;
