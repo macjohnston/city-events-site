@@ -7,93 +7,79 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Portland Events</h1>
-    <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. 
-       <a href="index.html">Back to Cities</a>
-    </p>
+  <h1>Portland Events</h1>
+  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
 
-    <div class="table-wrapper">
-      <table id="events-table">
-        <thead>
-          <tr>
-            <th>Date/Time</th>
-            <th>Event Title</th>
-            <th>Venue</th>
-            <th>Tags</th>
-            <th>Price</th>
-            <th>Age</th>
-            <th>Links</th>
-            <th>Sort Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Events loaded dynamically -->
-        </tbody>
-      </table>
-    </div>
-
-    <div id="loading" style="text-align:center; margin:1rem; color:#666;">Loading events...</div>
-    <div id="error-message" style="color:red; text-align:center; margin:1rem; display:none;"></div>
-
-    <h2>Recurring Events</h2>
-    <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
-
-    <footer>
-      <p>Built with love for city explorers. Let's make finding events easy!</p>
-    </footer>
+  <div class="table-wrapper">
+    <table id="events-table">
+      <thead>
+        <tr>
+          <th>Date/Time</th>
+          <th>Event Title @ Venue</th>
+          <th>Tags</th>
+          <th>Price | Age</th>
+          <th>Organizers</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Events loaded dynamically -->
+      </tbody>
+    </table>
   </div>
+
+  <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">No events found? Check back soon or contribute on GitHub!</div>
+
+  <h2>Recurring Events</h2>
+  <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
+
+  <footer>
+    <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
+  </footer>
 
   <script>
     async function fetchEventsFromSheet() {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
-      const loading = document.getElementById('loading');
-      const errorMsg = document.getElementById('error-message');
-      const tbody = document.querySelector('#events-table tbody');
-
       try {
         const response = await fetch(sheetUrl);
         if (!response.ok) throw new Error('HTTP ' + response.status);
-
         const text = await response.text();
-        const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
-        if (!match) throw new Error('Invalid Google Sheet response');
-
+        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\);/);
+        if (!match) throw new Error('Invalid response format');
         const json = JSON.parse(match[1]);
         const rows = json.table.rows || [];
-
-        loading.style.display = 'none';
+        const tbody = document.querySelector('#events-table tbody');
         tbody.innerHTML = '';
-
-        if (rows.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:#999;">No events this week.</td></tr>';
-          return;
-        }
 
         rows.forEach(row => {
           const cells = row.c.map(cell => cell ? cell.v : 'TBD');
+          const date = cells[0].replace(',', '').replace(' (', ' (');
+          const title = cells[1];
+          const venue = cells[2];
+          const tags = cells[3];
+          const price = cells[4];
+          const age = cells[5];
+          const organizers = cells[6];
+          const link = cells[7];
+          const titleVenue = `${title} @ ${venue}`;
+          const priceAge = `${price} | ${age}`;
           const rowHtml = `
             <tr>
-              <td>${cells[0]}</td>
-              <td>${cells[1]}</td>
-              <td>${cells[2]}</td>
-              <td>${cells[3]}</td>
-              <td>${cells[4]}</td>
-              <td>${cells[5]}</td>
-              <td><a href="${cells[6]}" target="_blank">Tickets</a></td>
-              <td>${cells[7]}</td>
+              <td>${date}</td>
+              <td>${titleVenue}</td>
+              <td>${tags}</td>
+              <td>${priceAge}</td>
+              <td>${organizers}</td>
+              <td><a href="${link}" target="_blank">Tickets</a></td>
             </tr>`;
           tbody.insertAdjacentHTML('beforeend', rowHtml);
         });
       } catch (error) {
-        loading.style.display = 'none';
-        errorMsg.style.display = 'block';
-        errorMsg.textContent = 'Error: ' + error.message + ' — Check sheet permissions or run script.';
         console.error('Fetch error:', error);
+        document.getElementById('error-message').style.display = 'block';
       }
     }
 
-    // Run on load
     fetchEventsFromSheet();
   </script>
 </body>
