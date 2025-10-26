@@ -23,7 +23,6 @@
             <th>Tags</th>
             <th>Price</th>
             <th>Age</th>
-            <th>Organizers</th>
             <th>Links</th>
             <th>Sort Date</th>
           </tr>
@@ -34,17 +33,32 @@
       </table>
     </div>
 
-    <div id="error-message">No events found? Check back soon or contribute on GitHub!</div>
+    <div id="error-message">No events found? Check back soon.</div>
 
     <h2>Recurring Events</h2>
     <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
 
     <footer>
-      <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
+      <p>Built with love for city explorers. Let's make finding events easy!</p>
     </footer>
   </div>
 
   <script>
+    // Clean date: Oct 31, 2025 (7pm)
+    function formatDate(raw) {
+      if (!raw || raw.includes('Date(')) {
+        const match = raw.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),/);
+        if (match) {
+          const date = new Date(match[1], match[2], match[3], match[4], match[5]);
+          return date.toLocaleString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: 'numeric', minute: '2-digit'
+          }).replace(',', '');
+        }
+      }
+      return raw;
+    }
+
     async function fetchEventsFromSheet() {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
       try {
@@ -57,17 +71,18 @@
 
         rows.forEach(row => {
           const cells = row.c.map(cell => cell ? cell.v : 'TBD');
+          const date = formatDate(cells[0]);
+
           const rowHtml = `
             <tr>
-              <td>${cells[0]}</td>
+              <td>${date}</td>
               <td>${cells[1]}</td>
-              <td>${cells[2]}</td>
+              <td>${cells[2 mej}</td>
               <td>${cells[3]}</td>
               <td>${cells[4]}</td>
               <td>${cells[5]}</td>
-              <td>${cells[6]}</td>
-              <td><a href="${cells[7]}" target="_blank">Tickets</a></td>
-              <td>${cells[8]}</td>
+              <td><a href="${cells[6]}" target="_blank">Tickets</a></td>
+              <td>${cells[7]}</td>
             </tr>`;
           tbody.insertAdjacentHTML('beforeend', rowHtml);
         });
