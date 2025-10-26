@@ -33,7 +33,9 @@
       </table>
     </div>
 
-    <div id="error-message">No events found? Check back soon.</div>
+    <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">
+      No events found? Check back soon.
+    </div>
 
     <h2>Recurring Events</h2>
     <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
@@ -44,40 +46,31 @@
   </div>
 
   <script>
-    // Clean date: Oct 31, 2025 (7pm)
-    function formatDate(raw) {
-      if (!raw || raw.includes('Date(')) {
-        const match = raw.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),/);
-        if (match) {
-          const date = new Date(match[1], match[2], match[3], match[4], match[5]);
-          return date.toLocaleString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric',
-            hour: 'numeric', minute: '2-digit'
-          }).replace(',', '');
-        }
-      }
-      return raw;
-    }
-
     async function fetchEventsFromSheet() {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
       try {
         const response = await fetch(sheetUrl);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
         const text = await response.text();
-        const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.+)\);/)[1]);
-        const rows = json.table.rows;
+        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\);/);
+        if (!match) throw new Error('Invalid response format');
+        const json = JSON.parse(match[1]);
+        const rows = json.table.rows || [];
         const tbody = document.querySelector('#events-table tbody');
         tbody.innerHTML = '';
 
+        if (rows.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:#999;">No events this week.</td></tr>';
+          return;
+        }
+
         rows.forEach(row => {
           const cells = row.c.map(cell => cell ? cell.v : 'TBD');
-          const date = formatDate(cells[0]);
-
           const rowHtml = `
             <tr>
-              <td>${date}</td>
+              <td>${cells[0]}</td>
               <td>${cells[1]}</td>
-              <td>${cells[2 mej}</td>
+              <td>${cells[2]}</td>
               <td>${cells[3]}</td>
               <td>${cells[4]}</td>
               <td>${cells[5]}</td>
@@ -87,7 +80,10 @@
           tbody.insertAdjacentHTML('beforeend', rowHtml);
         });
       } catch (error) {
-        document.getElementById('error-message').style.display = 'block';
+        console.error('Fetch error:', error);
+        const msg = document.getElementById('error-message');
+        msg.style.display = 'block';
+        msg.textContent = 'Error loading events: ' + error.message;
       }
     }
 
