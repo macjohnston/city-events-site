@@ -7,38 +7,42 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Portland Events</h1>
-  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
+  <div class="container">
+    <h1>Portland Events</h1>
+    <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. 
+       <a href="index.html">Back to Cities</a>
+    </p>
 
-  <div class="table-wrapper">
-    <table id="events-table">
-      <thead>
-        <tr>
-          <th>Date/Time</th>
-          <th>Event Title</th>
-          <th>Venue</th>
-          <th>Tags</th>
-          <th>Price</th>
-          <th>Age</th>
-          <th>Organizers</th>
-          <th>Links</th>
-          <th>Sort Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Events will be loaded here dynamically -->
-      </tbody>
-    </table>
+    <div class="table-wrapper">
+      <table id="events-table">
+        <thead>
+          <tr>
+            <th>Date/Time</th>
+            <th>Event Title</th>
+            <th>Venue</th>
+            <th>Tags</th>
+            <th>Price</th>
+            <th>Age</th>
+            <th>Organizers</th>
+            <th>Links</th>
+            <th>Sort Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Events loaded dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="error-message">No events found? Check back soon or contribute on GitHub!</div>
+
+    <h2>Recurring Events</h2>
+    <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
+
+    <footer>
+      <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
+    </footer>
   </div>
-
-  <div id="error-message">No events found? Check back soon or contribute on GitHub!</div>
-
-  <h2>Recurring Events</h2>
-  <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
-
-  <footer>
-    <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
-  </footer>
 
   <script>
     async function fetchEventsFromSheet() {
@@ -49,7 +53,7 @@
         const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.+)\);/)[1]);
         const rows = json.table.rows;
         const tbody = document.querySelector('#events-table tbody');
-        tbody.innerHTML = ''; // Clear any old content
+        tbody.innerHTML = '';
 
         rows.forEach(row => {
           const cells = row.c.map(cell => cell ? cell.v : 'TBD');
@@ -62,7 +66,7 @@
               <td>${cells[4]}</td>
               <td>${cells[5]}</td>
               <td>${cells[6]}</td>
-              <td><a href="${cells[7]}">Tickets</a></td>
+              <td><a href="${cells[7]}" target="_blank">Tickets</a></td>
               <td>${cells[8]}</td>
             </tr>`;
           tbody.insertAdjacentHTML('beforeend', rowHtml);
