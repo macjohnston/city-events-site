@@ -8,7 +8,9 @@
 </head>
 <body>
   <h1>Portland Events</h1>
-  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
+  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. 
+     <a href="index.html">Back to Cities</a>
+  </p>
 
   <div class="table-wrapper">
     <table id="events-table">
@@ -28,13 +30,15 @@
     </table>
   </div>
 
-  <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">No events found? Check back soon or contribute on GitHub!</div>
+  <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">
+    No events found? Check back soon.
+  </div>
 
   <h2>Recurring Events</h2>
   <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
 
   <footer>
-    <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
+    <p>Built with love for city explorers. Let's make finding events easy!</p>
   </footer>
 
   <script>
@@ -44,38 +48,35 @@
         const response = await fetch(sheetUrl);
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const text = await response.text();
-        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\);/);
-        if (!match) throw new Error('Invalid response format');
+        const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+        if (!match) throw new Error('Invalid response');
         const json = JSON.parse(match[1]);
         const rows = json.table.rows || [];
         const tbody = document.querySelector('#events-table tbody');
         tbody.innerHTML = '';
 
+        if (rows.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#999;">No events this week.</td></tr>';
+          return;
+        }
+
         rows.forEach(row => {
-          const cells = row.c.map(cell => cell ? cell.v : 'TBD');
-          const date = cells[0].replace(',', '').replace(' (', ' (');
-          const title = cells[1];
-          const venue = cells[2];
-          const tags = cells[3];
-          const price = cells[4];
-          const age = cells[5];
-          const organizers = cells[6];
-          const link = cells[7];
-          const titleVenue = `${title} @ ${venue}`;
-          const priceAge = `${price} | ${age}`;
+          const c = row.c.map(cell => cell ? cell.v : 'TBD');
+          const titleVenue = `<strong>${c[1]}</strong> @ ${c[2]}`;
+          const priceAge = `${c[4]} | ${c[5]}`;
           const rowHtml = `
             <tr>
-              <td>${date}</td>
+              <td>${c[0]}</td>
               <td>${titleVenue}</td>
-              <td>${tags}</td>
+              <td>${c[3]}</td>
               <td>${priceAge}</td>
-              <td>${organizers}</td>
-              <td><a href="${link}" target="_blank">Tickets</a></td>
+              <td>${c[6]}</td>
+              <td><a href="${c[7]}" target="_blank">Tickets</a></td>
             </tr>`;
           tbody.insertAdjacentHTML('beforeend', rowHtml);
         });
       } catch (error) {
-        console.error('Fetch error:', error);
+        console.error(error);
         document.getElementById('error-message').style.display = 'block';
       }
     }
