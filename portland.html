@@ -8,7 +8,9 @@
 </head>
 <body>
   <h1>Portland Events</h1>
-  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
+  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. 
+     <a href="index.html">Back to Cities</a>
+  </p>
 
   <div class="table-wrapper">
     <table id="events-table">
@@ -24,87 +26,60 @@
           <th>Sort Date</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Events loaded dynamically -->
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
 
-  <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">No events found? Check back soon or contribute on GitHub!</div>
+  <div id="msg" style="text-align:center; margin:1rem; color:#777;"></div>
 
   <h2>Recurring Events</h2>
   <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
 
-  <footer>
-    <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
-  </footer>
+  <footer><p>Built with love for city explorers.</p></footer>
 
   <script>
-    // dd/mm/yyyy formatter
-    function formatDate(raw) {
-      if (!raw || raw.includes('Date(')) {
-        const match = raw.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),/);
-        if (match) {
-          const date = new Date(match[1], match[2], match[3], match[4], match[5]);
-          const day = String(date.getDate()).padStart(2, '0');
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const year = date.getFullYear();
-          const hours = date.getHours();
-          const minutes = date.getMinutes();
-          return `${day}/${month}/${year} (${hours}:${minutes.toString().padStart(2, '0')})`;
-        }
-      }
-      return raw;
-    }
+    async function load() {
+      const url = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
+      const tbody = document.querySelector('#events-table tbody');
+      const msg   = document.getElementById('msg');
 
-    async function fetchEventsFromSheet() {
-      const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
       try {
-        const response = await fetch(sheetUrl);
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const text = await response.text();
-        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\);/);
-        if (!match) throw new Error('Invalid response format');
-        const json = JSON.parse(match[1]);
-        const rows = json.table.rows || [];
-        const tbody = document.querySelector('#events-table tbody');
-        tbody.innerHTML = '';
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('HTTP '+r.status);
+        const txt = await r.text();
+        const m = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+        if (!m) throw new Error('Bad response');
+        const data = JSON.parse(m[1]).table.rows;
 
-        let validRows = 0;
-        rows.forEach(row => {
-          const cells = row.c.map(cell => cell ? cell.v : 'TBD');
-          const tbdCount = cells.filter(c => c === 'TBD').length;
-          if (tbdCount > 3) return; // Skip phantom rows
-
-          const date = formatDate(cells[0]);
-
-          const rowHtml = `
-            <tr>
-              <td>${date}</td>
-              <td>${cells[1]}</td>
-              <td>${cells[2]}</td>
-              <td>${cells[3]}</td>
-              <td>${cells[4]}</td>
-              <td>${cells[5]}</td>
-              <td><a href="${cells[6]}" target="_blank">Tickets</a></td>
-              <td>${cells[7]}</td>
-            </tr>`;
-          tbody.insertAdjacentHTML('beforeend', rowHtml);
-          validRows++;
-        });
-
-        if (validRows === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #999;">No events this week.</td></tr>';
+        if (!data.length) {
+          tbody.innerHTML = '<tr><td colspan="8" style="padding:2rem;color:#999;">No events this week.</td></tr>';
+          return;
         }
-      } catch (error) {
-        console.error('Fetch error:', error);
-        const msg = document.getElementById('error-message');
-        msg.style.display = 'block';
-        msg.textContent = 'Error loading events: ' + error.message;
+
+        data.forEach(row => {
+          const c = row.c.map(cell => cell ? cell.v : 'TBD');
+          const tbd = c.filter(v=>v==='TBD').length;
+          if (tbd > 3) return; // skip phantoms
+
+          const html = `
+            <tr>
+              <td>${c[0]}</td>
+              <td>${c[1]}</td>
+              <td>${c[2]}</td>
+              <td>${c[3]}</td>
+              <td>${c[4]}</td>
+              <td>${c[5]}</td>
+              <td><a href="${c[6]}" target="_blank">Tickets</a></td>
+              <td>${c[7]}</td>
+            </tr>`;
+          tbody.insertAdjacentHTML('beforeend', html);
+        });
+      } catch (e) {
+        msg.style.color = 'red';
+        msg.textContent = 'Load error: '+e.message;
       }
     }
-
-    fetchEventsFromSheet();
+    load();
   </script>
 </body>
 </html>
