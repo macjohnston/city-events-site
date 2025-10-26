@@ -1,266 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portland Events</title>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg: #0f0f0f;
-      --card: #1a1a1a;
-      --text: #e0e0e0;
-      --accent: #00d4ff;
-      --border: #333;
-    }
-    @media (prefers-color-scheme: light) {
-      :root { --bg:#f8f9fa; --card:#ffffff; --text:#212529; --accent:#0066cc; --border:#dee2e6; }
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 1.5rem;
-      line-height: 1.6;
-    }
-    .container { max-width: 1100px; margin: auto; }
-
-    h1 {
-      text-align: center;
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-      color: var(--accent);
-    }
-    .subtitle {
-      text-align: center;
-      font-size: 1rem;
-      opacity: 0.8;
-      margin-bottom: 1.5rem;
-    }
-
-    /* Filter Bar */
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-    .filter-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.5rem 1rem;
-      border-radius: 2rem;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .filter-btn.active, .filter-btn:hover {
-      background: var(--accent);
-      color: #000;
-      border-color: var(--accent);
-    }
-
-    /* Event Cards */
-    .event-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      gap: 1rem;
-      transition: transform 0.2s;
-    }
-    .event-card:hover { transform: translateY(-2px); }
-    .date-box {
-      background: var(--accent);
-      color: #000;
-      text-align: center;
-      border-radius: 8px;
-      padding: 0.5rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-    .date-box .day { font-size: 1.4rem; }
-    .event-info h3 {
-      margin: 0 0 0.4rem;
-      font-size: 1.1rem;
-      color: var(--text);
-    }
-    .venue {
-      font-size: 0.95rem;
-      opacity: 0.9;
-      margin-bottom: 0.4rem;
-    }
-    .tags {
-      font-size: 0.8rem;
-      color: var(--accent);
-      margin-bottom: 0.4rem;
-    }
-    .meta {
-      font-size: 0.8rem;
-      opacity: 0.7;
-    }
-    .tickets {
-      margin-top: 0.5rem;
-    }
-    .tickets a {
-      background: var(--accent);
-      color: #000;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
-
-    /* Loading & Empty */
-    #loading, #empty { text-align: center; margin: 2rem 0; font-style: italic; opacity: 0.7; }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.8rem;
-      opacity: 0.6;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="container">
-
   <h1>Portland Events</h1>
-  <p class="subtitle">
-    Upcoming events in Portland, OR – music, comedy, bars, festivals, and more.<br>
-    Updated <span id="updated">…</span>
-  </p>
+  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
 
-  <!-- Filter Buttons -->
-  <div class="filters">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="concert">Concerts</button>
-    <button class="filter-btn" data-filter="comedy">Comedy</button>
-    <button class="filter-btn" data-filter="bar">Bars</button>
-    <button class="filter-btn" data-filter="festival">Festivals</button>
+  <div class="table-wrapper">
+    <table id="events-table">
+      <thead>
+        <tr>
+          <th>Date/Time</th>
+          <th>Event Title</th>
+          <th>Venue</th>
+          <th>Tags</th>
+          <th>Price</th>
+          <th>Age</th>
+          <th>Organizers</th>
+          <th>Links</th>
+          <th>Sort Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Events will be loaded here dynamically -->
+      </tbody>
+    </table>
   </div>
 
-  <div id="loading">Loading events…</div>
-  <div id="empty" style="display:none;">No events match your filter.</div>
+  <div id="error-message">No events found? Check back soon or contribute on GitHub!</div>
 
-  <div id="events-container">
-    <!-- Events injected here -->
-  </div>
+  <h2>Recurring Events</h2>
+  <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
 
-  <div class="footer">
-    Data from Eventbrite • Ticketmaster • Meetup | Auto-updated every Thursday
-  </div>
+  <footer>
+    <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
+  </footer>
 
-</div>
+  <script>
+    async function fetchEventsFromSheet() {
+      const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
+      try {
+        const response = await fetch(sheetUrl);
+        const text = await response.text();
+        const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.+)\);/)[1]);
+        const rows = json.table.rows;
+        const tbody = document.querySelector('#events-table tbody');
+        tbody.innerHTML = ''; // Clear any old content
 
-<script>
-  // 7-day window
-  const now = new Date();
-  const weekEnd = new Date(now); weekEnd.setDate(now.getDate() + 6);
-  const format = d => d.toISOString().split('T')[0];
-
-  // Filter logic
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      filterEvents(btn.dataset.filter);
-    });
-  });
-
-  function filterEvents(tag) {
-    const cards = document.querySelectorAll('.event-card');
-    let visible = 0;
-    cards.forEach(card => {
-      const tags = card.dataset.tags;
-      const show = (tag === 'all') || tags.includes(tag);
-      card.style.display = show ? 'grid' : 'none';
-      if (show) visible++;
-    });
-    document.getElementById('empty').style.display = visible ? 'none' : 'block';
-  }
-
-  async function loadEvents() {
-    const sheetId = '1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48';
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Sheet1`;
-
-    try {
-      const resp = await fetch(url);
-      const txt = await resp.text();
-      const json = JSON.parse(txt.match(/google\.visualization\.Query\.setResponse\((.+)\);/)[1]);
-      const rows = json.table.rows;
-
-      const container = document.getElementById('events-container');
-      container.innerHTML = '';
-
-      rows.forEach(r => {
-        const c = r.c.map(cell => cell ? cell.v : 'TBD');
-        const sortDate = c[8];
-        if (!sortDate || sortDate < format(now) || sortDate > format(weekEnd)) return;
-
-        // Parse date
-        const [datePart, timePart] = c[0].split(' (');
-        const time = timePart ? timePart.replace(')', '') : '';
-        const [weekday, month, day] = datePart.split(' ');
-
-        // Map tags
-        const rawTags = c[3].toLowerCase();
-        const tagList = [];
-        if (rawTags.includes('music') || rawTags.includes('concert')) tagList.push('concert');
-        if (rawTags.includes('comedy')) tagList.push('comedy');
-        if (rawTags.includes('bar') || rawTags.includes('pub')) tagList.push('bar');
-        if (rawTags.includes('festival')) tagList.push('festival');
-
-        const card = document.createElement('div');
-        card.className = 'event-card';
-        card.dataset.tags = tagList.join(' ');
-        card.innerHTML = `
-          <div class="date-box">
-            <div class="day">${day}</div>
-            <div>${month}</div>
-            <div>${weekday}</div>
-            ${time ? `<div class="time">${time}</div>` : ''}
-          </div>
-          <div class="event-info">
-            <h3>${c[1]}</h3>
-            <div class="venue">${c[2]}</div>
-            <div class="tags">${c[3]}</div>
-            <div class="meta">
-              ${c[4]} • ${c[5]} • ${c[6]}
-            </div>
-            <div class="tickets">
-              <a href="${c[7]}" target="_blank">Get Tickets</a>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('updated').textContent = new Date().toLocaleDateString();
-      filterEvents('all');
-    } catch (e) {
-      document.getElementById('loading').innerHTML = 'Failed to load events.';
-      console.error(e);
+        rows.forEach(row => {
+          const cells = row.c.map(cell => cell ? cell.v : 'TBD');
+          const rowHtml = `
+            <tr>
+              <td>${cells[0]}</td>
+              <td>${cells[1]}</td>
+              <td>${cells[2]}</td>
+              <td>${cells[3]}</td>
+              <td>${cells[4]}</td>
+              <td>${cells[5]}</td>
+              <td>${cells[6]}</td>
+              <td><a href="${cells[7]}">Tickets</a></td>
+              <td>${cells[8]}</td>
+            </tr>`;
+          tbody.insertAdjacentHTML('beforeend', rowHtml);
+        });
+      } catch (error) {
+        document.getElementById('error-message').style.display = 'block';
+      }
     }
-  }
 
-  loadEvents();
-</script>
+    fetchEventsFromSheet();
+  </script>
 </body>
 </html>
