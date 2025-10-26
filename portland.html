@@ -33,9 +33,8 @@
       </table>
     </div>
 
-    <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">
-      No events found? Check back soon.
-    </div>
+    <div id="loading" style="text-align:center; margin:1rem; color:#666;">Loading events...</div>
+    <div id="error-message" style="color:red; text-align:center; margin:1rem; display:none;"></div>
 
     <h2>Recurring Events</h2>
     <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
@@ -48,15 +47,22 @@
   <script>
     async function fetchEventsFromSheet() {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
+      const loading = document.getElementById('loading');
+      const errorMsg = document.getElementById('error-message');
+      const tbody = document.querySelector('#events-table tbody');
+
       try {
         const response = await fetch(sheetUrl);
         if (!response.ok) throw new Error('HTTP ' + response.status);
+
         const text = await response.text();
-        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\);/);
-        if (!match) throw new Error('Invalid response format');
+        const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+        if (!match) throw new Error('Invalid Google Sheet response');
+
         const json = JSON.parse(match[1]);
         const rows = json.table.rows || [];
-        const tbody = document.querySelector('#events-table tbody');
+
+        loading.style.display = 'none';
         tbody.innerHTML = '';
 
         if (rows.length === 0) {
@@ -80,13 +86,14 @@
           tbody.insertAdjacentHTML('beforeend', rowHtml);
         });
       } catch (error) {
+        loading.style.display = 'none';
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = 'Error: ' + error.message + ' — Check sheet permissions or run script.';
         console.error('Fetch error:', error);
-        const msg = document.getElementById('error-message');
-        msg.style.display = 'block';
-        msg.textContent = 'Error loading events: ' + error.message;
       }
     }
 
+    // Run on load
     fetchEventsFromSheet();
   </script>
 </body>
