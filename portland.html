@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portland Events</title>
   <style>
-    :root { --bg: #111; --text: #eee; --header: #0f0; --link: #0af; --border: #444; }
+    :root { --bg: #111; --text: #eee; --link: #0af; --border: #444; --accent: #0f0; }
     body { 
       font-family: 'Courier New', monospace; background: var(--bg); color: var(--text); 
       padding: 1rem; margin: 0; line-height: 1.5; font-size: 0.9rem;
     }
-    h1 { color: var(--header); margin: 0 0 0.5rem 0; font-size: 1.8rem; }
-    h2 { color: var(--header); margin: 1.5rem 0 0.8rem; font-size: 1.2rem; }
+    h1 { color: var(--accent); margin: 0 0 0.5rem 0; font-size: 1.8rem; }
+    h2 { color: var(--accent); margin: 1.5rem 0 0.8rem; font-size: 1.2rem; }
     a { color: var(--link); text-decoration: none; }
     a:hover { text-decoration: underline; }
     .header { font-size: 0.85rem; margin-bottom: 1rem; }
@@ -22,23 +22,50 @@
       background: #222; color: #eee; border: 1px solid var(--border); padding: 0.4rem 0.8rem;
       border-radius: 4px; font-size: 0.75rem; cursor: pointer;
     }
-    .filter-btn.active { background: #0af; color: #000; font-weight: bold; }
+    .filter-btn.active { 
+      background: var(--accent); color: #000; font-weight: bold; 
+    }
     .table-wrapper { 
       overflow-x: auto; -webkit-overflow-scrolling: touch; 
       border: 1px solid var(--border); border-radius: 6px;
     }
-    table { width: 100%; min-width: 560px; border-collapse: collapse; }
+    table { 
+      width: 100%; border-collapse: collapse; font-size: 0.8rem;
+      table-layout: fixed; /* Force equal column width */
+    }
     th, td { 
-      border: 1px solid var(--border); padding: 0.5rem; text-align: left; 
+      border: 1px solid var(--border); padding: 0.4rem; text-align: left; 
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     th { background: #222; font-weight: normal; }
-    td { max-width: 130px; }
-    td:nth-child(2), td:nth-child(3) { max-width: 150px; } /* Title & Venue */
+    td { max-width: 0; } /* Let table-layout handle it */
     tr:hover { background: #222; }
+
+    /* Mobile: Stack table rows */
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr { display: block; }
+      thead tr { position: absolute; top: -9999px; left: -9999px; }
+      tr { border: 1px solid var(--border); margin-bottom: 0.5rem; border-radius: 4px; }
+      td { 
+        border: none; border-bottom: 1px solid var(--border); 
+        position: relative; padding-left: 50%; white-space: normal;
+      }
+      td:before { 
+        position: absolute; top: 6px; left: 6px; width: 45%; 
+        padding-right: 10px; white-space: nowrap; font-weight: bold;
+      }
+      td:nth-of-type(1):before { content: "Date/Time"; }
+      td:nth-of-type(2):before { content: "Title"; }
+      td:nth-of-type(3):before { content: "Venue"; }
+      td:nth-of-type(4):before { content: "Tags"; }
+      td:nth-of-type(5):before { content: "Price"; }
+      td:nth-of-type(6):before { content: "Age"; }
+      td:nth-of-type(7):before { content: "Tickets"; }
+    }
+
     .support { margin: 2rem 0; text-align: center; }
     .btn {
-      display: inline-block; background: #0af; color: #000; 
+      display: inline-block; background: var(--accent); color: #000; 
       padding: 0.6rem 1rem; border-radius: 6px; font-weight: bold; margin: 0.5rem;
       font-size: 0.85rem;
     }
@@ -128,7 +155,7 @@
             };
           })
           .filter(Boolean)
-          .sort((a, b) => a.sortDate.localeCompare(b.sortDate)); // Sort by date
+          .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
 
         render('all');
       } catch (e) {
@@ -147,7 +174,7 @@
         const select = document.createElement('select');
         select.innerHTML = '<option value="">All Venues</option>' + 
           venues.map(v => `<option value="${v}">${v}</option>`).join('');
-        select.style.margin = '1rem 0'; select.style.width = '100%';
+        select.style.margin = '1rem 0'; select.style.width = '100%'; select.style.padding = '0.5rem';
         select.onchange = () => renderVenue(select.value);
         const div = document.createElement('div');
         div.appendChild(select);
