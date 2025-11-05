@@ -53,3 +53,13 @@ table {
 
 .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { min-width: 1000px; } /* Wide like 19hz */
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+  margin: 20px 0;
+}
+table { 
+  width: 100%;
+  min-width: 1000px; /* Wide for horizontal scroll */
+}
