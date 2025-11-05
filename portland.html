@@ -61,55 +61,113 @@
     const filters = document.querySelectorAll('.filter-btn');
     let allEvents = [];
 
-    async function fetchEventsFromSheet() {
-      const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
+    async function load() {
+      const url = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
       try {
-        const response = await fetch(sheetUrl);
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const text = await response.text();
-        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\);/);
-        if (!match) throw new Error('Invalid response format');
-        const json = JSON.parse(match[1]);
-        const rows = json.table.rows || [];
-        const tbody = document.querySelector('#events-table tbody');
-        tbody.innerHTML = '';
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const txt = await r.text();
+        const m = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+        if (!m) throw new Error('Bad data');
+        const data = JSON.parse(m[1]).table.rows;
 
-        if (rows.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #999;">No events this week.</td></tr>';
-          return;
-        }
+        allEvents = data
+          .map(row => {
+            const c = row.c.map(cell => cell ? cell.v : 'TBD');
+            if (c.filter(v => v === 'TBD').length > 3) return null;
+            return {
+              dateStr: c[0],
+              title: c[1],
+              venue: c[2],
+              tags: c[3].toLowerCase(),
+              price: c[4],
+              age: c[5],
+              url: c[6],
+              sortDate: c[7]
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
 
-        let validRows = 0;
-        rows.forEach(row => {
-          const cells = row.c.map(cell => cell ? cell.v : 'TBD');
-          const tbdCount = cells.filter(c => c === 'TBD').length;
-          if (tbdCount > 3) return; // Skip phantoms
-
-          const rowHtml = `
-            <tr>
-              <td>${cells[0]}</td>
-              <td>${cells[1]}</td>
-              <td>${cells[2]}</td>
-              <td>${cells[3]}</td>
-              <td>${cells[4]}</td>
-              <td>${cells[5]}</td>
-              <td><a href="${cells[6]}" target="_blank">Tickets</a></td>
-              <td>${cells[7]}</td>
-            </tr>`;
-          tbody.insertAdjacentHTML('beforeend', rowHtml);
-          validRows++;
-        });
-
-        if (validRows === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #999;">No valid events this week.</td></tr>';
-        }
-      } catch (error) {
-        console.error('Fetch error:', error);
-        const msg = document.getElementById('error-message');
-        msg.style.display = 'block';
-        msg.textContent = 'Error loading events: ' + error.message + ' (Make sheet public?)';
+        render('all');
+      } catch (e) {
+        err.style.display = 'block';
+        err.textContent = 'Load failed: ' + e.message;
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:2rem; color:#999;">No events this week.</td></tr>';
       }
     }
+
+    function render(filter) {
+      tbody.innerHTML = '';
+      let filtered = allEvents;
+
+      if (filter === 'venue') {
+        const venues = [...new Set(allEvents.map(e => e.venue.split(' (')[0]))].sort();
+        const select = document.createElement('select');
+        select.innerHTML = '<option value="">All Venues</option>' + 
+          venues.map(v => `<option value="${v}">${v}</option>`).join('');
+        select.style.margin = '1rem 0'; select.style.width = '100%'; select.style.padding = '0.5rem';
+        select.onchange = () => renderVenue(select.value);
+        const div = document.createElement('div');
+        div.appendChild(select);
+        document.querySelector('.filters').appendChild(div);
+        return;
+      }
+
+      if (filter !== 'all') {
+        filtered = allEvents.filter(e => e.tags.includes(filter));
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:2rem; color:#999;">No events match.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(e => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${e.dateStr}</td>
+          <td>${e.title}</td>
+          <td>${e.venue}</td>
+          <td>${e.tags}</td>
+          <td>${e.price}</td>
+          <td>${e.age}</td>
+          <td><a href="${e.url}" target="_blank">Tickets</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderVenue(selectedVenue) {
+      tbody.innerHTML = '';
+      const filtered = selectedVenue ? allEvents.filter(e => e.venue.includes(selectedVenue)) : allEvents;
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:2rem; color:#999;">No events at this venue.</td></tr>';
+        return;
+      }
+      filtered.forEach(e => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${e.dateStr}</td>
+          <td>${e.title}</td>
+          <td>${e.venue}</td>
+          <td>${e.tags}</td>
+          <td>${e.price}</td>
+          <td>${e.age}</td>
+          <td><a href="${e.url}" target="_blank">Tickets</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        if (filter !== 'venue') render(filter);
+      });
+    });
 
     fetchEventsFromSheet();
   </script>
