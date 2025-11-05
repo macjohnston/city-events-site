@@ -50,3 +50,6 @@ table {
   width: 100%;
   min-width: 600px;  // Wide for horizontal scroll
 }
+
+.table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { min-width: 1000px; } /* Wide like 19hz */
