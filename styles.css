@@ -19,7 +19,6 @@ a:hover { color: #333; text-decoration: none; }
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
 }
 th, td {
   padding: 8px;
@@ -32,38 +31,6 @@ th {
 }
 @media (max-width: 600px) {
   body { padding: 10px; }
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-  thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-  tr { border: 1px solid #ccc; margin-bottom: 10px; }
-  td {
-    border: none;
-    border-bottom: 1px solid #eee;
-    position: relative;
-    padding-left: 50%;
-  }
-  td:before {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 45%;
-    padding-right: 10px;
-    white-space: nowrap;
-    font-weight: bold;
-  }
-  td:nth-of-type(1):before { content: "Date/Time"; }
-  td:nth-of-type(2):before { content: "Event Title"; }
-  td:nth-of-type(3):before { content: "Venue"; }
-  td:nth-of-type(4):before { content: "Tags"; }
-  td:nth-of-type(5):before { content: "Price"; }
-  td:nth-of-type(6):before { content: "Age"; }
-  td:nth-of-type(7):before { content: "Links"; }
-  td:nth-of-type(8):before { content: "Sort Date"; }
 }
 @media (prefers-color-scheme: dark) {
   body { background: #222; color: #fff; }
@@ -73,93 +40,3 @@ th {
 }
 #error-message { color: red; margin-top: 10px; }
 footer { text-align: center; margin-top: 30px; font-size: 0.8em; }
-</style>
-</head>
-<body>
-  <h1>Portland Events</h1>
-  <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
-
-  <div class="table-wrapper">
-    <table id="events-table">
-      <thead>
-        <tr>
-          <th>Date/Time</th>
-          <th>Event Title</th>
-          <th>Venue</th>
-          <th>Tags</th>
-          <th>Price</th>
-          <th>Age</th>
-          <th>Links</th>
-          <th>Sort Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Events loaded dynamically -->
-      </tbody>
-    </table>
-  </div>
-
-  <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">No events found? Check back soon or contribute on GitHub!</div>
-
-  <h2>Recurring Events</h2>
-  <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
-
-  <footer>
-    <p>Built with ❤️ for city explorers. Let's make finding events easy!</p>
-  </footer>
-
-  <script>
-    async function fetchEventsFromSheet() {
-      const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
-      try {
-        const response = await fetch(sheetUrl);
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const text = await response.text();
-        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\);/);
-        if (!match) throw new Error('Invalid response format');
-        const json = JSON.parse(match[1]);
-        const rows = json.table.rows || [];
-        const tbody = document.querySelector('#events-table tbody');
-        tbody.innerHTML = '';
-
-        if (rows.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #999;">No events this week.</td></tr>';
-          return;
-        }
-
-        let validRows = 0;
-        rows.forEach(row => {
-          const cells = row.c.map(cell => cell ? cell.v : 'TBD');
-          const tbdCount = cells.filter(c => c === 'TBD').length;
-          if (tbdCount > 3) return; // Skip phantoms
-
-          const rowHtml = `
-            <tr>
-              <td>${cells[0]}</td>
-              <td>${cells[1]}</td>
-              <td>${cells[2]}</td>
-              <td>${cells[3]}</td>
-              <td>${cells[4]}</td>
-              <td>${cells[5]}</td>
-              <td><a href="${cells[6]}" target="_blank">Tickets</a></td>
-              <td>${cells[7]}</td>
-            </tr>`;
-          tbody.insertAdjacentHTML('beforeend', rowHtml);
-          validRows++;
-        });
-
-        if (validRows === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #999;">No valid events this week.</td></tr>';
-        }
-      } catch (error) {
-        console.error('Fetch error:', error);
-        const msg = document.getElementById('error-message');
-        msg.style.display = 'block';
-        msg.textContent = 'Error loading events: ' + error.message + ' (Make sheet public?)';
-      }
-    }
-
-    fetchEventsFromSheet();
-  </script>
-</body>
-</html>
