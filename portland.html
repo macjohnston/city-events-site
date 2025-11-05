@@ -10,6 +10,16 @@
   <h1>Portland Events</h1>
   <p>Upcoming events in Portland, OR. All types—music, art, festivals, and more. Updated Oct 19, 2025. <a href="index.html">Back to Cities</a></p>
 
+  <div class="filters">
+    <div class="filter-btn active" data-filter="all">All</div>
+    <div class="filter-btn" data-filter="music">Music</div>
+    <div class="filter-btn" data-filter="sports">Sports</div>
+    <div class="filter-btn" data-filter="comedy">Comedy</div>
+    <div class="filter-btn" data-filter="bars">Bars</div>
+    <div class="filter-btn" data-filter="festival">Festivals</div>
+    <div class="filter-btn" data-filter="venue">Venue</div>
+  </div>
+
   <div class="table-wrapper">
     <table id="events-table">
       <thead>
@@ -32,6 +42,12 @@
 
   <div id="error-message" style="color: red; text-align: center; margin: 1rem; display: none;">No events found? Check back soon or contribute on GitHub!</div>
 
+  <div class="support">
+    <p>Love this? Help keep it free!</p>
+    <a href="https://buymeacoffee.com/portlandevents" target="_blank" class="btn">Buy us a Coffee</a>
+    <a href="submit.html" class="btn">Promote Your Event</a>
+  </div>
+
   <h2>Recurring Events</h2>
   <p>Example: Woodstock Farmers Market - Every Sunday. Check sources for details.</p>
 
@@ -40,6 +56,11 @@
   </footer>
 
   <script>
+    const tbody = document.querySelector('#events-table tbody');
+    const err = document.getElementById('error-message');
+    const filters = document.querySelectorAll('.filter-btn');
+    let allEvents = [];
+
     async function fetchEventsFromSheet() {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1-h7u488sVWTwNtSsAd7W55tEchWknQZHHeltptrxW48/gviz/tq?tqx=out:json&sheet=Sheet1';
       try {
